@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
-const CurrencyConfig = ({ onConfigSubmit }) => {
-  const [config, setConfig] = useState([
-    { from: 'RUB', to: 'EUR', rate: 0.012, fee: 1 },
-    { from: 'EUR', to: 'USD', rate: 1.1, fee: 0.5 },
-    { from: 'USD', to: 'GBP', rate: 0.8, fee: 1 },
-  ]);
+const CurrencyConfig = ({ config, setConfig }) => {
   const [newConfig, setNewConfig] = useState({ from: '', to: '', rate: '', fee: '' });
 
   const handleNewConfigChange = (field, value) => {
@@ -19,7 +14,6 @@ const CurrencyConfig = ({ onConfigSubmit }) => {
         { ...newConfig, rate: parseFloat(newConfig.rate), fee: parseFloat(newConfig.fee) },
       ];
       setConfig(updatedConfig);
-      onConfigSubmit(updatedConfig);
       setNewConfig({ from: '', to: '', rate: '', fee: '' });
     } else {
       alert('Please fill out all fields before adding.');

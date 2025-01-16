@@ -28,7 +28,7 @@ const App = () => {
   const calculateResult = (chain) => {
     let amount = chain.startAmount;
     let previousCurrency = chain.startCurrency;
-
+  
     for (const block of chain.blocks) {
       const pair = config.find(
         (c) => c.from === previousCurrency && c.to === block.currency
@@ -37,18 +37,20 @@ const App = () => {
         amount = amount * pair.rate * (1 - pair.fee / 100);
         previousCurrency = block.currency;
       } else {
-        return null; // Invalid chain
+        // Return an error message if the pair doesn't exist
+        return `Invalid chain: No conversion from ${previousCurrency} to ${block.currency}`;
       }
     }
-
-    return amount.toFixed(2);
+  
+    // If all conversions are valid, return the result string with the last currency
+    return `Result amount: ${amount.toFixed(2)} ${previousCurrency}`;
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
-        <h1 style={{textAlign: 'center'}}>Currency Exchange Strategy Builder</h1>
-        <CurrencyConfig onConfigSubmit={setConfig} />
+        <h1 style={{ textAlign: 'center' }}>Currency Exchange Strategy Builder</h1>
+        <CurrencyConfig config={config} setConfig={setConfig} />
         <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
           {chains.map((chain, index) => (
             <div
@@ -87,13 +89,13 @@ const App = () => {
             </div>
           ))}
         </div>
-        <button 
-          onClick={addChain} 
-          style={{ 
+        <button
+          onClick={addChain}
+          style={{
             marginTop: '20px',
             padding: '5px 10px',
             borderRadius: '5px',
-            cursor: 'pointer' 
+            cursor: 'pointer',
           }}
         >
           Create new exchange chain
