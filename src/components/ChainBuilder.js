@@ -20,7 +20,7 @@ const ChainBuilder = ({ chain, config, onChange }) => {
 
   // Add a new block to the chain
   const addBlock = () => {
-    const defaultCurrency = allCurrencies[0] || ''; // Default to the first available currency if any
+    const defaultCurrency = allCurrencies[0] || '';
     onChange({
       ...chain,
       blocks: [...chain.blocks, { currency: defaultCurrency }],
@@ -96,7 +96,7 @@ const ChainBlock = ({ block, index, allCurrencies, moveBlock, updateBlock, delet
     hover: (draggedItem) => {
       if (draggedItem.index !== index) {
         moveBlock(draggedItem.index, index);
-        draggedItem.index = index; // Update the dragged item's index
+        draggedItem.index = index;
       }
     },
   });

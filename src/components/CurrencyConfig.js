@@ -8,12 +8,10 @@ const CurrencyConfig = ({ onConfigSubmit }) => {
   ]);
   const [newConfig, setNewConfig] = useState({ from: '', to: '', rate: '', fee: '' });
 
-  // Handle changes to the new config form
   const handleNewConfigChange = (field, value) => {
     setNewConfig({ ...newConfig, [field]: value });
   };
 
-  // Add a new configuration and save immediately
   const addNewConfig = () => {
     if (newConfig.from && newConfig.to && newConfig.rate && newConfig.fee) {
       const updatedConfig = [
@@ -21,8 +19,8 @@ const CurrencyConfig = ({ onConfigSubmit }) => {
         { ...newConfig, rate: parseFloat(newConfig.rate), fee: parseFloat(newConfig.fee) },
       ];
       setConfig(updatedConfig);
-      onConfigSubmit(updatedConfig); // Save immediately
-      setNewConfig({ from: '', to: '', rate: '', fee: '' }); // Reset form
+      onConfigSubmit(updatedConfig);
+      setNewConfig({ from: '', to: '', rate: '', fee: '' });
     } else {
       alert('Please fill out all fields before adding.');
     }
