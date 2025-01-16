@@ -51,7 +51,7 @@ const ExchangeForm = ({ onAddChain }) => {
         value={fee}
         onChange={(e) => setFee(e.target.value)}
       />
-      <button type="submit">Add Chain</button>
+      <button type="submit" style={{cursor: 'pointer'}}>Add Chain</button>
     </form>
   );
 };

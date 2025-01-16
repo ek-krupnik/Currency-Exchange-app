@@ -69,7 +69,7 @@ const CurrencyConfig = ({ onConfigSubmit }) => {
           style={{ marginLeft: '5px', marginRight: '5px', width: '50px' }}
           step="0.1"
         />
-        <button onClick={addNewConfig} style={{ marginLeft: '10px' }}>
+        <button onClick={addNewConfig} style={{ marginLeft: '10px', cursor: 'pointer' }}>
           Add
         </button>
       </div>

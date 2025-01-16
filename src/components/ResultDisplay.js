@@ -6,7 +6,7 @@ const ResultDisplay = ({ chains, calculateResult }) => {
       <h2>Results</h2>
       {chains.map((chain, index) => (
         <div key={index}>
-          Chain {index + 1}: {calculateResult(chain) || 'Invalid Chain'}
+          Chain {index + 1}: {calculateResult(chain) || 'Insufficient currency configuration data'}
         </div>
       ))}
     </div>

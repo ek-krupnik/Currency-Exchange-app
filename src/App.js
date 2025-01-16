@@ -7,23 +7,28 @@ import ResultDisplay from './components/ResultDisplay';
 
 const App = () => {
   const [config, setConfig] = useState([
-    { from: 'RUB', to: 'EUR', rate: 0.012, fee: 1 },
-    { from: 'EUR', to: 'USD', rate: 1.1, fee: 0.5 },
-    { from: 'USD', to: 'GBP', rate: 0.8, fee: 1 },
+    { from: 'EUR', to: 'RUB', rate: 105, fee: 1 },
+    { from: 'RUB', to: 'USD', rate: 0.01, fee: 0.5 },
+    { from: 'USD', to: 'GBP', rate: 0.82, fee: 1.5 },
   ]);
   const [chains, setChains] = useState([]);
 
   const addChain = () => {
     setChains([
       ...chains,
-      { startAmount: 10000, blocks: [{ currency: 'EUR' }] },
+      { startAmount: 1000, startCurrency: 'RUB', blocks: [] },
     ]);
+  };
+
+  const deleteChain = (index) => {
+    const updatedChains = chains.filter((_, i) => i !== index);
+    setChains(updatedChains);
   };
 
   const calculateResult = (chain) => {
     let amount = chain.startAmount;
-    let previousCurrency = chain.startCurrency; // Use user-specified starting currency
-  
+    let previousCurrency = chain.startCurrency;
+
     for (const block of chain.blocks) {
       const pair = config.find(
         (c) => c.from === previousCurrency && c.to === block.currency
@@ -35,30 +40,64 @@ const App = () => {
         return null; // Invalid chain
       }
     }
-  
+
     return amount.toFixed(2);
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
-        <h1>Currency Exchange Strategy Builder</h1>
+        <h1 style={{textAlign: 'center'}}>Currency Exchange Strategy Builder</h1>
         <CurrencyConfig onConfigSubmit={setConfig} />
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
           {chains.map((chain, index) => (
-            <ChainBuilder
+            <div
               key={index}
-              chain={chain}
-              config={config}
-              onChange={(updatedChain) => {
-                const newChains = [...chains];
-                newChains[index] = updatedChain;
-                setChains(newChains);
+              style={{
+                border: '1px solid black',
+                padding: '10px',
+                borderRadius: '5px',
+                marginBottom: '20px',
               }}
-            />
+            >
+              <ChainBuilder
+                chain={chain}
+                config={config}
+                onChange={(updatedChain) => {
+                  const newChains = [...chains];
+                  newChains[index] = updatedChain;
+                  setChains(newChains);
+                }}
+              />
+              <button
+                onClick={() => deleteChain(index)}
+                style={{
+                  backgroundColor: '#ff2c2c',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  marginBottom: '10px',
+                  marginLeft: '10px',
+                  cursor: 'pointer',
+                  borderRadius: '5px',
+                }}
+              >
+                Delete Chain
+              </button>
+            </div>
           ))}
         </div>
-        <button onClick={addChain}>Add New Chain</button>
+        <button 
+          onClick={addChain} 
+          style={{ 
+            marginTop: '20px',
+            padding: '5px 10px',
+            borderRadius: '5px',
+            cursor: 'pointer' 
+          }}
+        >
+          Create new exchange chain
+        </button>
         <ResultDisplay chains={chains} calculateResult={calculateResult} />
       </div>
     </DndProvider>
