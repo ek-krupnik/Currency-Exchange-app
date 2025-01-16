@@ -6,52 +6,75 @@ const CurrencyConfig = ({ onConfigSubmit }) => {
     { from: 'EUR', to: 'USD', rate: 1.1, fee: 0.5 },
     { from: 'USD', to: 'GBP', rate: 0.8, fee: 1 },
   ]);
+  const [newConfig, setNewConfig] = useState({ from: '', to: '', rate: '', fee: '' });
 
-  const handleChange = (index, field, value) => {
-    const newConfig = [...config];
-    newConfig[index][field] = field === 'rate' || field === 'fee' ? parseFloat(value) : value;
-    setConfig(newConfig);
+  // Handle changes to the new config form
+  const handleNewConfigChange = (field, value) => {
+    setNewConfig({ ...newConfig, [field]: value });
   };
 
-  const handleSubmit = () => {
-    onConfigSubmit(config);
+  // Add a new configuration and save immediately
+  const addNewConfig = () => {
+    if (newConfig.from && newConfig.to && newConfig.rate && newConfig.fee) {
+      const updatedConfig = [
+        ...config,
+        { ...newConfig, rate: parseFloat(newConfig.rate), fee: parseFloat(newConfig.fee) },
+      ];
+      setConfig(updatedConfig);
+      onConfigSubmit(updatedConfig); // Save immediately
+      setNewConfig({ from: '', to: '', rate: '', fee: '' }); // Reset form
+    } else {
+      alert('Please fill out all fields before adding.');
+    }
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: '20px' }}>
       <h2>Currency Configuration</h2>
       {config.map((pair, index) => (
         <div key={index}>
-          <input
-            type="text"
-            value={pair.from}
-            onChange={(e) => handleChange(index, 'from', e.target.value)}
-            placeholder="From Currency"
-          />
-          →
-          <input
-            type="text"
-            value={pair.to}
-            onChange={(e) => handleChange(index, 'to', e.target.value)}
-            placeholder="To Currency"
-          />
-          Rate:
-          <input
-            type="number"
-            value={pair.rate}
-            onChange={(e) => handleChange(index, 'rate', e.target.value)}
-            step="0.01"
-          />
-          Fee (%):
-          <input
-            type="number"
-            value={pair.fee}
-            onChange={(e) => handleChange(index, 'fee', e.target.value)}
-            step="0.1"
-          />
+          {pair.from} → {pair.to} | Rate: {pair.rate} | Fee: {pair.fee}%
         </div>
       ))}
-      <button onClick={handleSubmit}>Save Configuration</button>
+      <h3>Add New Configuration</h3>
+      <div>
+        <input
+          type="text"
+          placeholder="From Currency"
+          value={newConfig.from}
+          onChange={(e) => handleNewConfigChange('from', e.target.value)}
+          style={{ marginRight: '5px' }}
+        />
+        →
+        <input
+          type="text"
+          placeholder="To Currency"
+          value={newConfig.to}
+          onChange={(e) => handleNewConfigChange('to', e.target.value)}
+          style={{ marginLeft: '5px', marginRight: '5px' }}
+        />
+        Rate:
+        <input
+          type="number"
+          placeholder="Rate"
+          value={newConfig.rate}
+          onChange={(e) => handleNewConfigChange('rate', e.target.value)}
+          style={{ marginLeft: '5px', marginRight: '5px', width: '80px' }}
+          step="0.01"
+        />
+        Fee (%):
+        <input
+          type="number"
+          placeholder="Fee"
+          value={newConfig.fee}
+          onChange={(e) => handleNewConfigChange('fee', e.target.value)}
+          style={{ marginLeft: '5px', marginRight: '5px', width: '50px' }}
+          step="0.1"
+        />
+        <button onClick={addNewConfig} style={{ marginLeft: '10px' }}>
+          Add
+        </button>
+      </div>
     </div>
   );
 };

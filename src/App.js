@@ -22,7 +22,7 @@ const App = () => {
 
   const calculateResult = (chain) => {
     let amount = chain.startAmount;
-    let previousCurrency = 'RUB'; // Assume the starting currency is RUB
+    let previousCurrency = chain.startCurrency; // Use user-specified starting currency
   
     for (const block of chain.blocks) {
       const pair = config.find(

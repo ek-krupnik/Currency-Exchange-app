@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 const ItemType = 'BLOCK';
 
 const ChainBuilder = ({ chain, config, onChange }) => {
+  // Extract all unique currencies from the config
+  const allCurrencies = useMemo(
+    () => Array.from(new Set(config.flatMap((pair) => [pair.from, pair.to]))),
+    [config]
+  );
+
   // Move a block to a new position
   const moveBlock = (fromIndex, toIndex) => {
     const newBlocks = [...chain.blocks];
@@ -14,7 +20,7 @@ const ChainBuilder = ({ chain, config, onChange }) => {
 
   // Add a new block to the chain
   const addBlock = () => {
-    const defaultCurrency = config[0]?.to || ''; // Default to the first configured currency if available
+    const defaultCurrency = allCurrencies[0] || ''; // Default to the first available currency if any
     onChange({
       ...chain,
       blocks: [...chain.blocks, { currency: defaultCurrency }],
@@ -27,16 +33,44 @@ const ChainBuilder = ({ chain, config, onChange }) => {
     onChange({ ...chain, blocks: newBlocks });
   };
 
+  // Update the starting currency or amount
+  const updateStart = (field, value) => {
+    onChange({ ...chain, [field]: field === 'startAmount' ? parseFloat(value) || 0 : value });
+  };
+
   return (
     <div style={{ border: '1px solid black', padding: '10px', marginBottom: '20px' }}>
       <h3>Chain</h3>
-      <div>Start Amount: {chain.startAmount}</div>
+      <div>
+        Start Amount:
+        <input
+          type="number"
+          value={chain.startAmount || ''}
+          onChange={(e) => updateStart('startAmount', e.target.value)}
+          style={{ marginLeft: '5px', marginRight: '10px', width: '80px' }}
+        />
+        Start Currency:
+        <select
+          value={chain.startCurrency || ''}
+          onChange={(e) => updateStart('startCurrency', e.target.value)}
+          style={{ marginLeft: '5px' }}
+        >
+          <option value="" disabled>
+            Select Currency
+          </option>
+          {allCurrencies.map((currency, idx) => (
+            <option key={idx} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
+      </div>
       {chain.blocks.map((block, index) => (
         <ChainBlock
           key={index}
           index={index}
           block={block}
-          config={config}
+          allCurrencies={allCurrencies}
           moveBlock={moveBlock}
           updateBlock={(value) => {
             const newBlocks = [...chain.blocks];
@@ -51,7 +85,7 @@ const ChainBuilder = ({ chain, config, onChange }) => {
   );
 };
 
-const ChainBlock = ({ block, index, config, moveBlock, updateBlock, deleteBlock }) => {
+const ChainBlock = ({ block, index, allCurrencies, moveBlock, updateBlock, deleteBlock }) => {
   const [, ref] = useDrag({
     type: ItemType,
     item: { index },
@@ -87,9 +121,9 @@ const ChainBlock = ({ block, index, config, moveBlock, updateBlock, deleteBlock 
         <option value="" disabled>
           Select Currency
         </option>
-        {config.map((pair, idx) => (
-          <option key={idx} value={pair.to}>
-            {pair.to}
+        {allCurrencies.map((currency, idx) => (
+          <option key={idx} value={currency}>
+            {currency}
           </option>
         ))}
       </select>
